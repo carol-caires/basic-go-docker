@@ -1,7 +1,7 @@
-version: '3'
+version: '3' # docker-compose version
 services:
   backend:
-    build: .
+    build: . # building from Dockerfile
     volumes:
       - ./backend:/go/src/backend
     ports: 
@@ -12,13 +12,13 @@ services:
     ports:
       - 8080:80
     volumes: 
-      - ./frontend:/usr/local/apache2/htdocs
+      - ./frontend:/usr/local/apache2/htdocs # it permits to modify the code without rebuild the containers
   database:
     image: mariadb:10.3
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: example
-      MYSQL_DATABASE: /tmp/database.sql
+      MYSQL_DATABASE: /tmp/database.sql # this file must be created with the database creation script
     ports:
       - "3306:3306"
     volumes:
