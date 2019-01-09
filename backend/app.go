@@ -17,19 +17,14 @@ func main() {
 
 func getStudents(w http.ResponseWriter, r *http.Request) {
 
-	db, err := sql.Open("mysql", "mydb:senhamydb@/mydb")
+	db, err := sql.Open("mysql", "root:example@tcp(172.18.0.4:3306)/dbmp") // TODO :: ver porque não está conectando
 	defer db.Close()
-
-	if err != nil {
-		fmt.Println("Deu pau na conexão")
-		return
-	}
 
 	students, err := db.Query("SELECT * FROM students")
 	defer students.Close()
 
 	if err != nil {
-		fmt.Println("Deu pau na query")
+		fmt.Printf("Deu pau :: %v", err.Error())
 		return
 	}
 
