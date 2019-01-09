@@ -6,7 +6,7 @@ services:
       - ./backend:/go/src/backend
     ports: 
       - 3000:3000
-    command: bash -c "cd /go/src/backend && go run app.go"
+    command: bash -c "go get -u github.com/go-sql-driver/mysql && cd /go/src/backend && go run app.go"
   frontend:
     image: httpd:2.4
     ports:
