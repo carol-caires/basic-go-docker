@@ -1,0 +1,25 @@
+version: '3'
+services:
+  backend:
+    build: .
+    volumes:
+      - ./backend:/go/src/backend
+    ports: 
+      - 3000:3000
+    command: bash -c "cd /go/src/backend && go run app.go"
+  frontend:
+    image: httpd:2.4
+    ports:
+      - 8080:80
+    volumes: 
+      - ./frontend:/usr/local/apache2/htdocs
+  database:
+    image: mariadb:10.3
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+      MYSQL_DATABASE: /tmp/database.sql
+    ports:
+      - "3306:3306"
+    volumes:
+     - ./database:/tmp
