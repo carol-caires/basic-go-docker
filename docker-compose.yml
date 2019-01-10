@@ -7,19 +7,29 @@ services:
     ports: 
       - 3000:3000
     command: bash -c "go get -u github.com/go-sql-driver/mysql && cd /go/src/backend && go run app.go"
+    networks:
+      - mynet
   frontend:
     image: httpd:2.4
     ports:
       - 8080:80
     volumes: 
       - ./frontend:/usr/local/apache2/htdocs # it permits to modify the code without rebuild the containers
+    networks:
+      - mynet
   database:
     image: mariadb:10.3
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: example
-      MYSQL_DATABASE: /tmp/database.sql # this file must be created with the database creation script
+      MYSQL_DATABASE: dbmp
+    command: --init-file /var/lib/mysql/dbmp.sql # create this file before run
     ports:
       - "3306:3306"
     volumes:
-     - ./database:/tmp
+     - ./database:/var/lib/mysql
+    networks:
+      - mynet
+networks:
+   mynet:
+     driver: "bridge" # creating new isolated network
