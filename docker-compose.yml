@@ -9,6 +9,8 @@ services:
     command: bash -c "go get -u github.com/go-sql-driver/mysql && cd /go/src/backend && go run app.go"
     networks:
       - mynet
+    depends_on: 
+      - database
   frontend:
     image: httpd:2.4
     ports:
@@ -17,6 +19,8 @@ services:
       - ./frontend:/usr/local/apache2/htdocs # it permits to modify the code without rebuild the containers
     networks:
       - mynet
+    depends_on: 
+      - backend
   database:
     image: mariadb:10.3
     restart: always
@@ -33,3 +37,6 @@ services:
 networks:
    mynet:
      driver: "bridge" # creating new isolated network
+     ipam:
+      config:
+        - subnet: 172.20.0.0/16
