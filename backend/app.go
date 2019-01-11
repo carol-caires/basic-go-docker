@@ -2,7 +2,9 @@ package main
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -27,15 +29,14 @@ func main() {
 
 func getStudents(w http.ResponseWriter, r *http.Request) {
 
-	db, err := sql.Open("mysql", "root:example@tcp(172.19.0.4:3306)/dbmp")
+	db, err := sql.Open("mysql", "root:example@tcp(172.20.0.2:3306)/dbmp")
 	defer db.Close()
 
 	result, err := db.Query("SELECT * FROM students;")
 	defer result.Close()
 
 	if err != nil {
-		fmt.Printf("Deu pau :: %v", err.Error())
-		return
+		panic(err.Error())
 	}
 
 	student := Student{}
@@ -56,19 +57,25 @@ func getStudents(w http.ResponseWriter, r *http.Request) {
 		studentRes = append(studentRes, student)
 	}
 
-	fmt.Fprintf(w, "Students :: %v!", studentRes)
+	b, err := json.Marshal(studentRes)
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	io.WriteString(w, string(b))
 }
 
 func getEmployees(w http.ResponseWriter, r *http.Request) {
-	db, err := sql.Open("mysql", "root:example@tcp(172.19.0.4:3306)/dbmp") // TODO :: ver porque não está conectando
+	db, err := sql.Open("mysql", "root:example@tcp(172.20.0.2:3306)/dbmp")
 	defer db.Close()
 
 	result, err := db.Query("SELECT * FROM employees;")
 	defer result.Close()
 
 	if err != nil {
-		fmt.Printf("Deu pau :: %v", err.Error())
-		return
+		panic(err.Error())
 	}
 
 	employee := Employee{}
@@ -89,5 +96,12 @@ func getEmployees(w http.ResponseWriter, r *http.Request) {
 		employeeRes = append(employeeRes, employee)
 	}
 
-	fmt.Fprintf(w, "Employees :: %v!", employeeRes)
+	b, err := json.Marshal(employeeRes)
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	io.WriteString(w, string(b))
 }
