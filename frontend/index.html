@@ -1,4 +1,53 @@
-<h1>Hello World da Carol...</h1>
-<p>Sejam bem vindos!</p>
+<html>
+    <head>
+        <script
+            src="https://code.jquery.com/jquery-2.2.4.min.js"
+            integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+            crossorigin="anonymous">
+        </script>
+    </head>
+    <body>
+        <h1>Hello World...</h1>
+        <p>Sejam bem vindos!</p>
 
-<p>Olarrrr</p>
+        <h3>Vamos mostrar todos os alunos:</h3>
+
+        <table id="table_students">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+
+    </body>
+</html>
+
+<script>
+    $(document).ready(function(){
+
+        url = "http://localhost:3000/students"
+        $.ajax({
+            type: "POST",
+            dataType: "JSON",
+            url: url,
+            success: function(retorno){
+                console.log(retorno)
+
+                var html_table = ''
+                for(ret in retorno){
+                    html_table += " <tr>\
+                                        <td>"+retorno[ret].id+"</td>\
+                                        <td>"+retorno[ret].name+"</td>\
+                                    </tr>"
+                }
+
+                $("#table_students > tbody").html(html_table)
+            }
+        });
+    })
+</script>
