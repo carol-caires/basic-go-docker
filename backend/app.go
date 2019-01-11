@@ -63,6 +63,7 @@ func getStudents(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 	}
 
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Content-Type", "application/json")
 	io.WriteString(w, string(b))
 }
@@ -102,6 +103,7 @@ func getEmployees(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 	}
 
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Content-Type", "application/json")
 	io.WriteString(w, string(b))
 }
