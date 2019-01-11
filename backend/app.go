@@ -6,9 +6,17 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 
 	_ "github.com/go-sql-driver/mysql"
 )
+
+var connectionString = fmt.Sprintf(
+	"%s:%s@tcp(%s)/%s",
+	os.Getenv("DB_USER"),
+	os.Getenv("DB_PASS"),
+	os.Getenv("DB_HOST"),
+	os.Getenv("DB_NAME"))
 
 type Student struct {
 	ID   int    `json:"id"`
@@ -21,6 +29,7 @@ type Employee struct {
 }
 
 func main() {
+
 	http.HandleFunc("/students", getStudents)
 	http.HandleFunc("/employees", getEmployees)
 
@@ -29,14 +38,15 @@ func main() {
 
 func getStudents(w http.ResponseWriter, r *http.Request) {
 
-	db, err := sql.Open("mysql", "root:example@tcp(172.20.0.2:3306)/dbmp")
+	db, err := sql.Open("mysql", connectionString)
 	defer db.Close()
 
 	result, err := db.Query("SELECT * FROM students;")
 	defer result.Close()
 
 	if err != nil {
-		panic(err.Error())
+		fmt.Println(err.Error())
+		return
 	}
 
 	student := Student{}
@@ -48,7 +58,8 @@ func getStudents(w http.ResponseWriter, r *http.Request) {
 
 		err = result.Scan(&id, &name)
 		if err != nil {
-			panic(err.Error())
+			fmt.Println(err.Error())
+			return
 		}
 
 		student.ID = id
@@ -69,14 +80,15 @@ func getStudents(w http.ResponseWriter, r *http.Request) {
 }
 
 func getEmployees(w http.ResponseWriter, r *http.Request) {
-	db, err := sql.Open("mysql", "root:example@tcp(172.20.0.2:3306)/dbmp")
+	db, err := sql.Open("mysql", connectionString)
 	defer db.Close()
 
 	result, err := db.Query("SELECT * FROM employees;")
 	defer result.Close()
 
 	if err != nil {
-		panic(err.Error())
+		fmt.Println(err.Error())
+		return
 	}
 
 	employee := Employee{}
@@ -88,7 +100,8 @@ func getEmployees(w http.ResponseWriter, r *http.Request) {
 
 		err = result.Scan(&id, &name)
 		if err != nil {
-			panic(err.Error())
+			fmt.Println(err.Error())
+			return
 		}
 
 		employee.ID = id
